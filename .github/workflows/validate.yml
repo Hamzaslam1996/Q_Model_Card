@@ -1,0 +1,35 @@
+name: Schema Validation
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install jsonschema
+        
+    - name: Validate QKD Toshiba sample
+      run: |
+        python src/validator.py data/qkd_toshiba_sample.json
+        
+    - name: Validate GBS Abacus sample
+      run: |
+        python src/validator.py data/gbs_abacus_sample.json
