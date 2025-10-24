@@ -1,0 +1,20 @@
+{
+  "name": "Quantum Fourier Transform",
+  "version": "1.0.0",
+  "type": "algorithm",
+  "description": "Implementation of the Quantum Fourier Transform algorithm for quantum computing applications",
+  "author": {
+    "name": "Test Author",
+    "email": "author@example.com",
+    "organization": "Quantum Research Lab"
+  },
+  "metadata": {
+    "qubits": 5,
+    "gates": ["H", "CNOT", "RZ", "T"],
+    "accuracy": 0.95,
+    "errorRate": 0.01
+  },
+  "tags": ["fourier", "transform", "quantum", "algorithm"],
+  "createdAt": "2024-01-01T00:00:00Z",
+  "updatedAt": "2024-01-15T00:00:00Z"
+}
