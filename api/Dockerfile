@@ -3,17 +3,19 @@ FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy package files from api directory
+COPY api/package*.json ./
 
-# Install dependencies
-RUN npm ci
+# Install dependencies (disable strict SSL for corporate proxies if needed)
+RUN npm config set strict-ssl false && \
+    npm install
 
-# Copy source code and schema
-COPY . .
+# Copy TypeScript config and source code from api directory
+COPY api/tsconfig.json ./
+COPY api/src ./src
 
 # Build TypeScript
-RUN npm run build
+RUN ./node_modules/.bin/tsc
 
 # Production stage
 FROM node:18-alpine
@@ -21,16 +23,17 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Copy package files
-COPY package*.json ./
+COPY api/package*.json ./
 
-# Install production dependencies only
-RUN npm ci --only=production
+# Install production dependencies only (disable strict SSL)
+RUN npm config set strict-ssl false && \
+    npm install --omit=dev
 
 # Copy built files from builder
 COPY --from=builder /app/dist ./dist
 
 # Copy schema directory (needed at runtime)
-COPY --from=builder /app/../schema /schema
+COPY schema /schema
 
 # Create necessary directories
 RUN mkdir -p /uploads /data
