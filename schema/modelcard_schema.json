@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Quantum Model Card Schema",
+  "description": "Schema for quantum technology model cards",
+  "type": "object",
+  "required": ["model_details", "technology_type"],
+  "properties": {
+    "model_details": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the quantum technology"
+        },
+        "version": {
+          "type": "string",
+          "description": "Version of the model card"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the quantum technology"
+        },
+        "owner": {
+          "type": "string",
+          "description": "Organization or person who owns this technology"
+        }
+      }
+    },
+    "technology_type": {
+      "type": "string",
+      "enum": ["QKD", "GBS", "QPU", "QML", "Other"],
+      "description": "Type of quantum technology"
+    },
+    "specifications": {
+      "type": "object",
+      "description": "Technical specifications of the quantum technology"
+    },
+    "performance_metrics": {
+      "type": "object",
+      "description": "Performance metrics and benchmarks"
+    }
+  }
+}
