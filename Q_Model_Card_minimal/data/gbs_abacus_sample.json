@@ -1,0 +1,12 @@
+{
+  "A_EntityDetails": {
+    "name": "Abacus \u2014 Universal Programmable Gaussian Boson Sampler",
+    "type": "Quantum Computation / Photonic GBS"
+  },
+  "F_PerformanceMetrics": [
+    {
+      "name": "Sampling throughput",
+      "measurement": "Two-fold \u224845 cps"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "A_EntityDetails": {
+    "name": "Toshiba Long Distance QKD System",
+    "type": "Quantum Communication / QKD"
+  },
+  "F_PerformanceMetrics": [
+    {
+      "name": "Secure key rate",
+      "measurement": "300 kb/s @ 10 dB loss"
+    }
+  ]
+}
