@@ -6,16 +6,28 @@ import fs from 'fs';
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import { v4 as uuidv4 } from 'uuid';
+import rateLimit from 'express-rate-limit';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Rate limiting configuration
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Apply rate limiting to all routes
+app.use(limiter);
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// Initialize Ajv for JSON schema validation
-const ajv = new Ajv({ allErrors: true });
+// Initialize Ajv for JSON schema validation (without allErrors to prevent DoS)
+const ajv = new Ajv({ allErrors: false });
 addFormats(ajv);
 
 // Load schema
@@ -49,6 +61,24 @@ const upload = multer({
 const dataDir = path.join(__dirname, '../../data');
 if (!fs.existsSync(dataDir)) {
   fs.mkdirSync(dataDir, { recursive: true });
+}
+
+// Helper function to sanitize and validate file IDs to prevent path injection
+function sanitizeFileId(id: string): string | null {
+  // Only allow alphanumeric characters, hyphens, and underscores
+  const sanitized = id.replace(/[^a-zA-Z0-9\-_]/g, '');
+  
+  // Check if sanitization removed any characters (potential attack)
+  if (sanitized !== id) {
+    return null;
+  }
+  
+  // Prevent empty strings
+  if (sanitized.length === 0) {
+    return null;
+  }
+  
+  return sanitized;
 }
 
 // Routes
@@ -115,8 +145,21 @@ app.get('/modelcards/:id', (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     
+    // Sanitize the ID to prevent path injection attacks
+    const sanitizedId = sanitizeFileId(id);
+    if (!sanitizedId) {
+      return res.status(400).json({ error: 'Invalid model card ID format' });
+    }
+    
     // Try to find the file with .json extension
-    const filePath = path.join(dataDir, `${id}.json`);
+    const filePath = path.join(dataDir, `${sanitizedId}.json`);
+    
+    // Verify the resolved path is still within dataDir (additional security check)
+    const resolvedPath = path.resolve(filePath);
+    const resolvedDataDir = path.resolve(dataDir);
+    if (!resolvedPath.startsWith(resolvedDataDir)) {
+      return res.status(400).json({ error: 'Invalid model card ID' });
+    }
     
     if (!fs.existsSync(filePath)) {
       return res.status(404).json({ error: 'Model card not found' });
