@@ -16,6 +16,19 @@ export interface ModelCardSection {
   body: string;
 }
 
+export interface ModelCardSections {
+  A: ModelCardSection;
+  B: ModelCardSection;
+  C: ModelCardSection;
+  D: ModelCardSection;
+  E: ModelCardSection;
+  F: ModelCardSection;
+  G: ModelCardSection;
+  H: ModelCardSection;
+  I: ModelCardSection;
+  J: ModelCardSection;
+}
+
 export interface ModelCardMetadata {
   entityName: string;
   entityType: string;
@@ -26,10 +39,10 @@ export interface ModelCardMetadata {
 
 export interface ModelCard {
   metadata: ModelCardMetadata;
-  sections: Record<ModelCardSectionId, ModelCardSection>;
+  sections: ModelCardSections;
 }
 
 export interface ValidationResult {
   valid: boolean;
-  errors?: unknown[];
+  errors?: string[];
 }

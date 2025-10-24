@@ -11,8 +11,8 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import type {
   ModelCard,
-  ModelCardSection,
   ModelCardSectionId,
+  ModelCardSections,
   ValidationResult,
 } from "@/lib/types";
 
@@ -22,7 +22,7 @@ interface SectionTemplate {
   placeholder: string;
 }
 
-const sectionTemplates: SectionTemplate[] = [
+const sectionTemplates = [
   {
     id: "A",
     title: "Background & Motivation",
@@ -73,7 +73,7 @@ const sectionTemplates: SectionTemplate[] = [
     title: "Ethics & Societal Considerations",
     placeholder: "Summarise ethical considerations, known risks, and stakeholder engagement.",
   },
-];
+] satisfies SectionTemplate[];
 
 const entityTypes = ["Academic", "Commercial", "Consortium", "Government", "Non-profit", "Other"];
 const domains = [
@@ -88,23 +88,44 @@ const domains = [
 
 const STORAGE_KEY = "q-card-generator:model-card";
 
+function createEmptySections() {
+  return sectionTemplates.reduce((acc, template) => {
+    acc[template.id] = {
+      id: template.id,
+      title: template.title,
+      body: "",
+    };
+    return acc;
+  }, {} as ModelCardSections);
+}
+
+function mergeSectionsWithTemplate(sections: ModelCardSections | undefined) {
+  const base = createEmptySections();
+  if (!sections) {
+    return base;
+  }
+
+  for (const template of sectionTemplates) {
+    const existing = sections[template.id];
+    if (existing) {
+      base[template.id] = {
+        id: template.id,
+        title: existing.title || template.title,
+        body: existing.body ?? "",
+      };
+    }
+  }
+  return base;
+}
+
 export default function InputPage() {
   const router = useRouter();
   const [entityName, setEntityName] = useState("");
   const [entityType, setEntityType] = useState(entityTypes[0] ?? "");
   const [technologyDomain, setTechnologyDomain] = useState(domains[0] ?? "");
-  const [sections, setSections] = useState<Record<ModelCardSectionId, ModelCardSection>>(() => {
-    return sectionTemplates.reduce((acc, template) => {
-      acc[template.id] = {
-        id: template.id,
-        title: template.title,
-        body: "",
-      };
-      return acc;
-    }, {} as Record<ModelCardSectionId, ModelCardSection>);
-  });
+  const [sections, setSections] = useState<ModelCardSections>(() => createEmptySections());
   const [fileInfo, setFileInfo] = useState<{ fileId: string; size: number } | null>(null);
-  const [errors, setErrors] = useState<unknown[]>([]);
+  const [errors, setErrors] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
@@ -116,7 +137,7 @@ export default function InputPage() {
       setEntityName(parsed.metadata.entityName);
       setEntityType(parsed.metadata.entityType);
       setTechnologyDomain(parsed.metadata.technologyDomain);
-      setSections(parsed.sections);
+      setSections(mergeSectionsWithTemplate(parsed.sections));
       if (parsed.metadata.uploadedFileId) {
         setFileInfo({
           fileId: parsed.metadata.uploadedFileId,
@@ -128,7 +149,6 @@ export default function InputPage() {
       sessionStorage.removeItem(STORAGE_KEY);
     }
   }, []);
-
 
   const handleSectionChange = (id: ModelCardSectionId, body: string) => {
     setSections((prev) => ({
@@ -317,7 +337,7 @@ export default function InputPage() {
           {errors.length > 0 ? (
             <ul className="list-inside list-disc text-destructive">
               {errors.map((error, index) => (
-                <li key={index}>{typeof error === "string" ? error : JSON.stringify(error)}</li>
+                <li key={index}>{error}</li>
               ))}
             </ul>
           ) : null}
