@@ -38,8 +38,7 @@ npm start
 ### Docker
 
 ```bash
-cd api
-docker build -t q-model-card-api .
+docker build -f api/Dockerfile -t q-model-card-api .
 docker run -p 3000:3000 q-model-card-api
 ```
 

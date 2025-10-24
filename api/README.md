@@ -191,10 +191,11 @@ Model cards must conform to the JSON schema defined in `/schema/modelcard_schema
 
 ## Docker
 
-Build the Docker image:
+Build the Docker image from the repository root:
 
 ```bash
-docker build -t q-model-card-api .
+cd /path/to/Q_Model_Card
+docker build -f api/Dockerfile -t q-model-card-api .
 ```
 
 Run the container:
@@ -205,6 +206,8 @@ docker run -p 3000:3000 \
   -v $(pwd)/data:/data \
   q-model-card-api
 ```
+
+The API will be available at `http://localhost:3000`
 
 ## Project Structure
 
