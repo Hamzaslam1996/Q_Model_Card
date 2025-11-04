@@ -1,0 +1,20 @@
+{
+  "model_details": {
+    "name": "Abacus Gaussian Boson Sampling",
+    "version": "1.0",
+    "description": "Gaussian Boson Sampling photonic quantum computer by Abacus",
+    "owner": "Abacus Quantum"
+  },
+  "technology_type": "GBS",
+  "specifications": {
+    "number_of_modes": "144",
+    "squeezing_parameter": "1.2 dB",
+    "photon_number_resolution": "high",
+    "operational_temperature": "cryogenic"
+  },
+  "performance_metrics": {
+    "sampling_rate": "10 kHz",
+    "fidelity": "0.92",
+    "quantum_advantage_threshold": "exceeded"
+  }
+}

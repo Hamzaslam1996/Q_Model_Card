@@ -1,0 +1,20 @@
+{
+  "model_details": {
+    "name": "Toshiba QKD System",
+    "version": "1.0",
+    "description": "Quantum Key Distribution system by Toshiba for secure key exchange",
+    "owner": "Toshiba"
+  },
+  "technology_type": "QKD",
+  "specifications": {
+    "protocol": "BB84",
+    "wavelength": "1550nm",
+    "key_rate": "1 Mbps",
+    "distance": "100 km"
+  },
+  "performance_metrics": {
+    "quantum_bit_error_rate": "1.5%",
+    "secret_key_rate": "500 kbps",
+    "uptime": "99.5%"
+  }
+}
